@@ -2,6 +2,7 @@ services:
   - type: web
     name: hotel-api
     runtime: node
+    plan: free
     rootDir: server
     buildCommand: npm install
     startCommand: npm start
@@ -43,3 +44,4 @@ services:
 
 databases:
   - name: hotel-db
+    plan: free
