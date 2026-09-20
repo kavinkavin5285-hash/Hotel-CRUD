@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: hotel-api
+    env: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: hotel-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: hotel-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: hotel-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: hotel-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: hotel-db
+          property: password
+
+  - type: static_site
+    name: hotel-client
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://hotel-api.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: hotel-db
