@@ -52,4 +52,4 @@ Open the Vite URL shown in the terminal.
 - PUT `/api/hotels/:id`
 - DELETE `/api/hotels/:id`
 
-Images are stored in `server/uploads`.
+Uploaded images are stored in `server/uploads`, and their relative paths are saved in the `hotels.image` database column.

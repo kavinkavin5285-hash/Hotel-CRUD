@@ -1,4 +1,11 @@
 import pool from "../db/database.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadFolder = process.env.UPLOAD_DIR || path.join(__dirname, "../uploads");
 
 const isValidLatitude = (value) => {
   const number = Number(value);
@@ -37,8 +44,8 @@ export const createHotel = async (req, res) => {
 
     const result = await pool.query(
       `INSERT INTO hotels
-       (title, description, latitude, longitude, price, image_data, image_mime_type)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       (title, description, latitude, longitude, price, image, image_data, image_mime_type)
+       VALUES ($1, $2, $3, $4, $5, $6, NULL, NULL)
        RETURNING *`,
       [
         title.trim(),
@@ -46,8 +53,7 @@ export const createHotel = async (req, res) => {
         Number(latitude),
         Number(longitude),
         Number(price),
-        req.file?.buffer || null,
-        req.file?.mimetype || null,
+        req.file ? `/uploads/${req.file.filename}` : null,
       ]
     );
 
@@ -172,8 +178,16 @@ export const updateHotel = async (req, res) => {
     }
 
     const oldHotel = oldResult.rows[0];
-    const imageData = req.file ? req.file.buffer : oldHotel.image_data;
-    const imageMimeType = req.file ? req.file.mimetype : oldHotel.image_mime_type;
+    const image = req.file ? `/uploads/${req.file.filename}` : oldHotel.image;
+    const imageData = req.file ? null : oldHotel.image_data;
+    const imageMimeType = req.file ? null : oldHotel.image_mime_type;
+
+    if (req.file && oldHotel.image) {
+      const oldFile = path.join(uploadFolder, path.basename(oldHotel.image));
+      if (fs.existsSync(oldFile)) {
+        fs.unlinkSync(oldFile);
+      }
+    }
 
     const result = await pool.query(
       `UPDATE hotels
@@ -181,11 +195,12 @@ export const updateHotel = async (req, res) => {
            description = $2,
            latitude = $3,
            longitude = $4,
-             price = $5,
-             image_data = $6,
-             image_mime_type = $7,
+           price = $5,
+           image = $6,
+           image_data = $7,
+           image_mime_type = $8,
            updated_at = CURRENT_TIMESTAMP
-           WHERE id = $8
+       WHERE id = $9
        RETURNING *`,
       [
         title.trim(),
@@ -193,6 +208,7 @@ export const updateHotel = async (req, res) => {
         Number(latitude),
         Number(longitude),
         Number(price),
+        image,
         imageData,
         imageMimeType,
         req.params.id,
@@ -215,6 +231,14 @@ export const deleteHotel = async (req, res) => {
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "Hotel not found." });
+    }
+
+    const hotel = result.rows[0];
+    if (hotel.image) {
+      const imagePath = path.join(uploadFolder, path.basename(hotel.image));
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
     }
 
     res.json({ message: "Hotel deleted successfully." });
@@ -245,9 +269,7 @@ export const getHotelImage = async (req, res) => {
 
 const formatHotel = (hotel) => ({
   ...hotel,
-  image: hotel.image_data
-    ? `/api/hotels/${hotel.id}/image`
-    : hotel.image || null,
+  image: hotel.image || (hotel.image_data ? `/api/hotels/${hotel.id}/image` : null),
   image_data: undefined,
   image_mime_type: undefined,
 });

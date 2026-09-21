@@ -23,15 +23,15 @@ function HotelCard({ hotel, onEdit, onDelete }) {
         </p>
 
         <div className="card-actions">
+          <Link to={`/hotels/${hotel.id}`} className="button">
+            View
+          </Link>
           <button onClick={() => onEdit(hotel)} className="button secondary">
             Edit
           </button>
           <button onClick={() => onDelete(hotel.id)} className="button danger">
             Delete
           </button>
-          <Link to={`/hotels/${hotel.id}`} className="button">
-            Details
-          </Link>
         </div>
       </div>
     </article>

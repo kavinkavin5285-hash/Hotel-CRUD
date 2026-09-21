@@ -7,7 +7,7 @@ function App() {
     <>
       <header className="header">
         <div className="container nav">
-          <Link to="/" className="logo">Hotel CRUD</Link>
+          <Link to="/" className="logo">hotel.com</Link>
           <Link to="/" className="nav-link">Hotels</Link>
         </div>
       </header>

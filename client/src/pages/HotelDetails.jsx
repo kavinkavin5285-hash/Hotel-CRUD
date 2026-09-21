@@ -87,7 +87,7 @@ function HotelDetails() {
   return (
     <>
       <Helmet>
-        <title>{hotel.title} | Hotel CRUD</title>
+        <title>{hotel.title} | hotel.com</title>
         <meta name="description" content={hotel.description.slice(0, 150)} />
       </Helmet>
 

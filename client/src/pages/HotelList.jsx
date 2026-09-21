@@ -105,7 +105,7 @@ function HotelList() {
   return (
     <>
       <Helmet>
-        <title>Hotel List | Hotel CRUD</title>
+        <title>Hotel List | hotel.com</title>
         <meta
           name="description"
           content="Search and manage hotels with a CRUD interface."
