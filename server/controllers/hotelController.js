@@ -1,6 +1,4 @@
 import pool from "../db/database.js";
-import fs from "fs";
-import path from "path";
 
 const isValidLatitude = (value) => {
   const number = Number(value);
@@ -37,17 +35,23 @@ export const createHotel = async (req, res) => {
       return res.status(400).json({ message: "Price must be greater than 0." });
     }
 
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
-
     const result = await pool.query(
       `INSERT INTO hotels
-       (title, description, latitude, longitude, price, image)
-       VALUES ($1, $2, $3, $4, $5, $6)
+       (title, description, latitude, longitude, price, image_data, image_mime_type)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [title.trim(), description.trim(), Number(latitude), Number(longitude), Number(price), image]
+      [
+        title.trim(),
+        description.trim(),
+        Number(latitude),
+        Number(longitude),
+        Number(price),
+        req.file?.buffer || null,
+        req.file?.mimetype || null,
+      ]
     );
 
-    res.status(201).json(result.rows[0]);
+    res.status(201).json(formatHotel(result.rows[0]));
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to create hotel." });
@@ -109,7 +113,7 @@ export const getHotels = async (req, res) => {
     );
 
     res.json({
-      hotels: result.rows,
+      hotels: result.rows.map(formatHotel),
       total: countResult.rows[0].total,
       limit: safeLimit,
       offset: safeOffset,
@@ -131,7 +135,7 @@ export const getHotelById = async (req, res) => {
       return res.status(404).json({ message: "Hotel not found." });
     }
 
-    res.json(result.rows[0]);
+    res.json(formatHotel(result.rows[0]));
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to get hotel." });
@@ -168,18 +172,8 @@ export const updateHotel = async (req, res) => {
     }
 
     const oldHotel = oldResult.rows[0];
-    let image = oldHotel.image;
-
-    if (req.file) {
-      image = `/uploads/${req.file.filename}`;
-
-      if (oldHotel.image) {
-        const oldFile = path.join(process.cwd(), oldHotel.image.replace("/uploads/", "uploads/"));
-        if (fs.existsSync(oldFile)) {
-          fs.unlinkSync(oldFile);
-        }
-      }
-    }
+    const imageData = req.file ? req.file.buffer : oldHotel.image_data;
+    const imageMimeType = req.file ? req.file.mimetype : oldHotel.image_mime_type;
 
     const result = await pool.query(
       `UPDATE hotels
@@ -187,10 +181,11 @@ export const updateHotel = async (req, res) => {
            description = $2,
            latitude = $3,
            longitude = $4,
-           price = $5,
-           image = $6,
+             price = $5,
+             image_data = $6,
+             image_mime_type = $7,
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $7
+           WHERE id = $8
        RETURNING *`,
       [
         title.trim(),
@@ -198,12 +193,13 @@ export const updateHotel = async (req, res) => {
         Number(latitude),
         Number(longitude),
         Number(price),
-        image,
+        imageData,
+        imageMimeType,
         req.params.id,
       ]
     );
 
-    res.json(result.rows[0]);
+    res.json(formatHotel(result.rows[0]));
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to update hotel." });
@@ -221,22 +217,37 @@ export const deleteHotel = async (req, res) => {
       return res.status(404).json({ message: "Hotel not found." });
     }
 
-    const hotel = result.rows[0];
-
-    if (hotel.image) {
-      const imagePath = path.join(
-        process.cwd(),
-        hotel.image.replace("/uploads/", "uploads/")
-      );
-
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
-      }
-    }
-
     res.json({ message: "Hotel deleted successfully." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to delete hotel." });
   }
 };
+
+export const getHotelImage = async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT image_data, image_mime_type FROM hotels WHERE id = $1",
+      [req.params.id]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].image_data) {
+      return res.status(404).json({ message: "Hotel image not found." });
+    }
+
+    res.type(result.rows[0].image_mime_type || "application/octet-stream");
+    res.send(result.rows[0].image_data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to get hotel image." });
+  }
+};
+
+const formatHotel = (hotel) => ({
+  ...hotel,
+  image: hotel.image_data
+    ? `/api/hotels/${hotel.id}/image`
+    : hotel.image || null,
+  image_data: undefined,
+  image_mime_type: undefined,
+});

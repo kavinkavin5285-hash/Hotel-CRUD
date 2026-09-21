@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 5000;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const uploadFolder = process.env.UPLOAD_DIR || path.join(__dirname, "uploads");
 
 async function ensureHotelsTableSchema() {
   try {
@@ -45,6 +46,9 @@ async function ensureHotelsTableSchema() {
     if (!columns.has("image") && !columns.has("image_path")) {
       await pool.query(`ALTER TABLE hotels ADD COLUMN image TEXT`);
     }
+
+    await pool.query(`ALTER TABLE hotels ADD COLUMN IF NOT EXISTS image_data BYTEA`);
+    await pool.query(`ALTER TABLE hotels ADD COLUMN IF NOT EXISTS image_mime_type VARCHAR(100)`);
   } catch (error) {
     console.error("Schema check failed:", error.message);
   }
@@ -52,7 +56,7 @@ async function ensureHotelsTableSchema() {
 
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(uploadFolder));
 
 app.get("/", (req, res) => {
   res.json({ message: "Hotel API is running." });

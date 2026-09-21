@@ -148,80 +148,84 @@ function HotelList() {
           />
         )}
 
-        <section className="filters">
-          <input
-            value={title}
-            onChange={(event) => {
-              setTitle(event.target.value);
-              setPage(1);
-            }}
-            placeholder="Search hotel title..."
-          />
-
-          <input
-            type="number"
-            min="1"
-            value={minPrice}
-            onChange={(event) => {
-              setMinPrice(event.target.value);
-              setPage(1);
-            }}
-            placeholder="Min price"
-          />
-
-          <input
-            type="number"
-            min="1"
-            value={maxPrice}
-            onChange={(event) => {
-              setMaxPrice(event.target.value);
-              setPage(1);
-            }}
-            placeholder="Max price"
-          />
-
-          <button
-            className="button secondary"
-            onClick={() => {
-              setTitle("");
-              setMinPrice("");
-              setMaxPrice("");
-              setPage(1);
-            }}
-          >
-            Clear
-          </button>
-        </section>
-
-        {loading && <p className="status">Loading hotels...</p>}
-
-        {error && <p className="message error">{error}</p>}
-
-        {!loading && !error && items.length === 0 && (
-          <div className="empty">
-            <h2>No hotels found</h2>
-            <p>Try changing your search/filter or add a hotel.</p>
-          </div>
-        )}
-
-        {!loading && !error && items.length > 0 && (
+        {!showForm && (
           <>
-            <div className="hotel-grid">
-              {items.map((hotel) => (
-                <HotelCard
-                  key={hotel.id}
-                  hotel={hotel}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </div>
+            <section className="filters">
+              <input
+                value={title}
+                onChange={(event) => {
+                  setTitle(event.target.value);
+                  setPage(1);
+                }}
+                placeholder="Search hotel title..."
+              />
 
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              onPageChange={setPage}
-            />
+              <input
+                type="number"
+                min="1"
+                value={minPrice}
+                onChange={(event) => {
+                  setMinPrice(event.target.value);
+                  setPage(1);
+                }}
+                placeholder="Min price"
+              />
+
+              <input
+                type="number"
+                min="1"
+                value={maxPrice}
+                onChange={(event) => {
+                  setMaxPrice(event.target.value);
+                  setPage(1);
+                }}
+                placeholder="Max price"
+              />
+
+              <button
+                className="button secondary"
+                onClick={() => {
+                  setTitle("");
+                  setMinPrice("");
+                  setMaxPrice("");
+                  setPage(1);
+                }}
+              >
+                Clear
+              </button>
+            </section>
+
+            {loading && <p className="status">Loading hotels...</p>}
+
+            {error && <p className="message error">{error}</p>}
+
+            {!loading && !error && items.length === 0 && (
+              <div className="empty">
+                <h2>No hotels found</h2>
+                <p>Try changing your search/filter or add a hotel.</p>
+              </div>
+            )}
+
+            {!loading && !error && items.length > 0 && (
+              <>
+                <div className="hotel-grid">
+                  {items.map((hotel) => (
+                    <HotelCard
+                      key={hotel.id}
+                      hotel={hotel}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                    />
+                  ))}
+                </div>
+
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
+              </>
+            )}
           </>
         )}
       </div>

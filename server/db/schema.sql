@@ -7,5 +7,7 @@ CREATE TABLE IF NOT EXISTS hotels (
     price DECIMAL(10, 2) NOT NULL CHECK (price > 0),
     image TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    image_data BYTEA,
+    image_mime_type VARCHAR(100)
 );

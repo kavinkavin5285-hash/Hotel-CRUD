@@ -2,11 +2,17 @@ services:
   - type: web
     name: hotel-api
     runtime: node
-    plan: free
+    plan: starter
     rootDir: server
     buildCommand: npm install
     startCommand: npm start
+    disk:
+      name: hotel-uploads
+      mountPath: /var/data/hotel-uploads
+      sizeGB: 1
     envVars:
+      - key: UPLOAD_DIR
+        value: /var/data/hotel-uploads
       - key: DB_HOST
         fromDatabase:
           name: hotel-db
