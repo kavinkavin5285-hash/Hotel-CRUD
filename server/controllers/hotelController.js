@@ -269,7 +269,9 @@ export const getHotelImage = async (req, res) => {
 
 const formatHotel = (hotel) => ({
   ...hotel,
-  image: hotel.image || (hotel.image_data ? `/api/hotels/${hotel.id}/image` : null),
+  image: hotel.image_data
+    ? `/api/hotels/${hotel.id}/image`
+    : hotel.image || null,
   image_data: undefined,
   image_mime_type: undefined,
 });
