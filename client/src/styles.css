@@ -38,8 +38,9 @@ button {
 }
 
 .header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #fff 0%, #fef6f4 100%);
+  border-bottom: 1px solid rgba(224, 90, 71, 0.18);
+  box-shadow: 0 2px 12px rgba(224, 90, 71, 0.06);
 }
 
 .nav {
@@ -58,15 +59,26 @@ button {
 }
 
 .logo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+  transition: transform 180ms ease, opacity 180ms ease;
+  font-size: 1.5rem;
+  letter-spacing: -0.05em;
+}
+
+.logo-brand {
+  color: var(--accent);
+}
+
+.logo-domain {
   color: var(--teal);
-  display: inline-block;
-  transition: color 180ms ease, transform 180ms ease;
 }
 
 .logo:hover,
 .logo:focus-visible {
-  color: var(--accent);
   transform: translateY(-2px);
+  opacity: 0.96;
 }
 
 .nav-link:hover,

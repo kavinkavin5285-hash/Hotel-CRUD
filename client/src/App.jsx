@@ -7,7 +7,9 @@ function App() {
     <>
       <header className="header">
         <div className="container nav">
-          <Link to="/" className="logo">hotel.com</Link>
+          <Link to="/" className="logo" aria-label="Hotel.com home">
+            <span className="logo-brand">Hotel</span><span className="logo-domain">.com</span>
+          </Link>
         </div>
       </header>
 
