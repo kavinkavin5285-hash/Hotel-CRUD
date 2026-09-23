@@ -52,7 +52,7 @@ function HotelList() {
   useEffect(() => {
     if (!message) return undefined;
 
-    const timeout = window.setTimeout(() => setMessage(""), 3500);
+    const timeout = window.setTimeout(() => setMessage(""), 2000);
 
     return () => window.clearTimeout(timeout);
   }, [message]);

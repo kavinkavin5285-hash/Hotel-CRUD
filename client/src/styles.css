@@ -276,7 +276,7 @@ textarea {
 }
 
 .notification {
-  animation: notification-fade 3.5s ease both;
+  animation: notification-fade 2s ease both;
 }
 
 @keyframes notification-fade {
