@@ -13,6 +13,7 @@ function HotelDetails() {
   const [userLocation, setUserLocation] = useState(null);
   const [geoError, setGeoError] = useState("");
   const [locating, setLocating] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const getHotel = async () => {
@@ -62,6 +63,18 @@ function HotelDetails() {
         maximumAge: 0,
       }
     );
+  };
+
+  const copyCoordinates = async () => {
+    const coordinates = `${hotel.latitude}, ${hotel.longitude}`;
+
+    try {
+      await navigator.clipboard.writeText(coordinates);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setGeoError("Coordinates could not be copied. You can select them manually.");
+    }
   };
 
   if (loading) return <p className="status">Loading hotel...</p>;
@@ -127,6 +140,14 @@ function HotelDetails() {
                   disabled={locating}
                 >
                   {locating ? "Getting location..." : "Use my location"}
+                </button>
+
+                <button
+                  type="button"
+                  className="button secondary"
+                  onClick={copyCoordinates}
+                >
+                  {copied ? "Coordinates copied" : "Copy coordinates"}
                 </button>
 
                 <a

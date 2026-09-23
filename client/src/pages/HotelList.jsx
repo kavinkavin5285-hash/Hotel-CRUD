@@ -18,6 +18,9 @@ function HotelList() {
   const [title, setTitle] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [titleDraft, setTitleDraft] = useState("");
+  const [minPriceDraft, setMinPriceDraft] = useState("");
+  const [maxPriceDraft, setMaxPriceDraft] = useState("");
   const [page, setPage] = useState(1);
   const [message, setMessage] = useState("");
 
@@ -33,6 +36,13 @@ function HotelList() {
         offset: (page - 1) * LIMIT,
       })
     );
+  };
+
+  const applyFilters = () => {
+    setTitle(titleDraft.trim());
+    setMinPrice(minPriceDraft);
+    setMaxPrice(maxPriceDraft);
+    setPage(1);
   };
 
   useEffect(() => {
@@ -150,50 +160,58 @@ function HotelList() {
 
         {!showForm && (
           <>
-            <section className="filters">
+            <form
+              className="filters"
+              onSubmit={(event) => {
+                event.preventDefault();
+                applyFilters();
+              }}
+            >
               <input
-                value={title}
-                onChange={(event) => {
-                  setTitle(event.target.value);
-                  setPage(1);
-                }}
+                value={titleDraft}
+                onChange={(event) => setTitleDraft(event.target.value)}
                 placeholder="Search hotel title..."
+                aria-label="Search hotel title"
               />
 
               <input
                 type="number"
                 min="1"
-                value={minPrice}
-                onChange={(event) => {
-                  setMinPrice(event.target.value);
-                  setPage(1);
-                }}
+                value={minPriceDraft}
+                onChange={(event) => setMinPriceDraft(event.target.value)}
                 placeholder="Min price"
+                aria-label="Minimum price"
               />
 
               <input
                 type="number"
                 min="1"
-                value={maxPrice}
-                onChange={(event) => {
-                  setMaxPrice(event.target.value);
-                  setPage(1);
-                }}
+                value={maxPriceDraft}
+                onChange={(event) => setMaxPriceDraft(event.target.value)}
                 placeholder="Max price"
+                aria-label="Maximum price"
               />
+
+              <button className="button primary" type="submit">
+                Search
+              </button>
 
               <button
+                type="button"
                 className="button secondary"
                 onClick={() => {
                   setTitle("");
                   setMinPrice("");
                   setMaxPrice("");
+                  setTitleDraft("");
+                  setMinPriceDraft("");
+                  setMaxPriceDraft("");
                   setPage(1);
                 }}
               >
                 Clear
               </button>
-            </section>
+            </form>
 
             {loading && <p className="status">Loading hotels...</p>}
 

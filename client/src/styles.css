@@ -4,11 +4,22 @@
   box-sizing: border-box;
 }
 
+:root {
+  --ink: #1f2933;
+  --muted: #68737d;
+  --accent: #e05a47;
+  --accent-dark: #b83d32;
+  --teal: #176b73;
+  --teal-soft: #e4f3f2;
+  --surface: #ffffff;
+  --line: #d9dee3;
+}
+
 body {
   margin: 0;
   font-family: "Manrope", "Segoe UI", sans-serif;
-  background: #f5f6f8;
-  color: #222;
+  background: #f3f6f5;
+  color: var(--ink);
 }
 
 button,
@@ -27,8 +38,8 @@ button {
 }
 
 .header {
-  background: #ffffff;
-  border-bottom: 1px solid #ddd;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
 }
 
 .nav {
@@ -41,9 +52,26 @@ button {
 .logo,
 .nav-link,
 .back-link {
-  color: #222;
+  color: var(--ink);
   text-decoration: none;
   font-weight: 700;
+}
+
+.logo {
+  color: var(--teal);
+  display: inline-block;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.logo:hover,
+.logo:focus-visible {
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.nav-link:hover,
+.back-link:hover {
+  color: var(--accent-dark);
 }
 
 .page {
@@ -61,6 +89,7 @@ button {
 
 .page-heading h1 {
   margin-bottom: 6px;
+  font-weight: 800;
 }
 
 .page-heading p {
@@ -76,19 +105,29 @@ button {
   text-decoration: none;
   background: #222;
   color: #fff;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(34, 34, 34, 0.16);
 }
 
 .button.primary {
-  background: #146c43;
+  background: var(--accent);
+}
+
+.button.primary:hover:not(:disabled) {
+  background: var(--accent-dark);
 }
 
 .button.secondary {
-  background: #e9ecef;
-  color: #222;
+  background: var(--teal-soft);
+  color: var(--teal);
 }
 
 .button.danger {
-  background: #c0392b;
+  background: #c44536;
 }
 
 .button:disabled {
@@ -102,8 +141,8 @@ button {
 .details,
 .map-section,
 .empty {
-  background: #fff;
-  border: 1px solid #ddd;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 10px;
 }
 
@@ -131,6 +170,12 @@ textarea {
   padding: 11px;
 }
 
+input:focus,
+textarea:focus {
+  outline: 3px solid rgba(224, 90, 71, 0.18);
+  border-color: var(--accent);
+}
+
 textarea {
   resize: vertical;
 }
@@ -151,7 +196,7 @@ textarea {
 
 .filters {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto;
+  grid-template-columns: 2fr 1fr 1fr auto auto;
   gap: 10px;
   padding: 16px;
   margin-bottom: 24px;
@@ -165,6 +210,12 @@ textarea {
 
 .hotel-card {
   overflow: hidden;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.hotel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(34, 34, 34, 0.1);
 }
 
 .card-image-link {
@@ -184,6 +235,13 @@ textarea {
 
 .card-content h2 {
   margin-top: 0;
+  color: var(--ink);
+  font-weight: 800;
+  transition: color 180ms ease;
+}
+
+.hotel-card:hover .card-content h2 {
+  color: var(--accent-dark);
 }
 
 .price {
@@ -280,8 +338,8 @@ textarea {
   align-items: center;
   padding: 7px 12px;
   border-radius: 999px;
-  background: #eef4ff;
-  color: #1d4ed8;
+  background: var(--teal-soft);
+  color: var(--teal);
   font-size: 12px;
   font-weight: 600;
 }

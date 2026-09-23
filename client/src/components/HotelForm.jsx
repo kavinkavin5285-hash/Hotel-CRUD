@@ -15,6 +15,7 @@ function HotelForm({ hotel, onSave, onCancel }) {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (hotel) {
@@ -34,6 +35,7 @@ function HotelForm({ hotel, onSave, onCancel }) {
 
     setImage(null);
     setError("");
+    setSubmitting(false);
   }, [hotel]);
 
   const handleChange = (event) => {
@@ -106,7 +108,13 @@ function HotelForm({ hotel, onSave, onCancel }) {
       data.append("image", image);
     }
 
-    await onSave(data);
+    setSubmitting(true);
+
+    try {
+      await onSave(data);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -122,13 +130,14 @@ function HotelForm({ hotel, onSave, onCancel }) {
 
       {error && <p className="message error">{error}</p>}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} aria-busy={submitting}>
         <label>
           Hotel title *
           <input
             name="title"
             value={form.title}
             onChange={handleChange}
+            disabled={submitting}
             placeholder="Hotel name"
           />
         </label>
@@ -139,6 +148,7 @@ function HotelForm({ hotel, onSave, onCancel }) {
             name="description"
             value={form.description}
             onChange={handleChange}
+            disabled={submitting}
             rows="5"
             placeholder="Describe the hotel"
           />
@@ -153,6 +163,7 @@ function HotelForm({ hotel, onSave, onCancel }) {
               name="latitude"
               value={form.latitude}
               onChange={handleChange}
+              disabled={submitting}
               placeholder="11.0168"
             />
           </label>
@@ -165,6 +176,7 @@ function HotelForm({ hotel, onSave, onCancel }) {
               name="longitude"
               value={form.longitude}
               onChange={handleChange}
+              disabled={submitting}
               placeholder="76.9558"
             />
           </label>
@@ -179,21 +191,22 @@ function HotelForm({ hotel, onSave, onCancel }) {
             name="price"
             value={form.price}
             onChange={handleChange}
+            disabled={submitting}
             placeholder="2500"
           />
         </label>
 
         <label>
           Image {hotel ? "(optional when editing)" : "*"}
-          <input type="file" accept="image/*" onChange={handleImage} />
+          <input type="file" accept="image/*" onChange={handleImage} disabled={submitting} />
         </label>
 
         {preview && (
           <img src={preview} alt="Hotel preview" className="preview-image" />
         )}
 
-        <button className="button primary" type="submit">
-          {hotel ? "Update Hotel" : "Add Hotel"}
+        <button className="button primary" type="submit" disabled={submitting}>
+          {submitting ? "Saving..." : hotel ? "Update Hotel" : "Add Hotel"}
         </button>
       </form>
     </div>
