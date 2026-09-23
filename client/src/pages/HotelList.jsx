@@ -49,6 +49,14 @@ function HotelList() {
     loadHotels();
   }, [page, title, minPrice, maxPrice]);
 
+  useEffect(() => {
+    if (!message) return undefined;
+
+    const timeout = window.setTimeout(() => setMessage(""), 3500);
+
+    return () => window.clearTimeout(timeout);
+  }, [message]);
+
   const handleSave = async (formData) => {
     const url = editingHotel
       ? `${API_URL}/${editingHotel.id}`
@@ -141,8 +149,8 @@ function HotelList() {
         </div>
 
         {message && (
-          <div className="message success">
-            {message}
+          <div className="message success notification" role="status">
+            <span>{message}</span>
             <button onClick={() => setMessage("")}>×</button>
           </div>
         )}
