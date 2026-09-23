@@ -221,6 +221,9 @@ textarea {
 }
 
 .hotel-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   overflow: hidden;
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
@@ -242,6 +245,9 @@ textarea {
 }
 
 .card-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   padding: 17px;
 }
 
@@ -264,13 +270,20 @@ textarea {
 .description {
   color: #666;
   line-height: 1.5;
+  min-height: 72px;
+  margin-bottom: 12px;
 }
 
 .card-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: auto;
+}
+
+.card-actions .button {
+  flex: 1 1 0;
+  text-align: center;
 }
 
 .message {

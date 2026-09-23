@@ -13,6 +13,15 @@ hotel-crud-project/
 
 ## Setup
 
+### Run everything on Windows
+From a normal Command Prompt, run:
+
+```bat
+run-project.bat
+```
+
+This starts PostgreSQL, the backend, and the frontend. The backend creates or updates the `hotels` table when it starts.
+
 ### 1. PostgreSQL
 Create a database, for example `hotel_db`.
 
